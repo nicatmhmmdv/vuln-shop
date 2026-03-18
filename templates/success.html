@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ödəniş Uğurlu — TechMart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0a0a0f;
+      --surface: #111118;
+      --border:  #1e1e2e;
+      --accent:  #e8ff47;
+      --danger:  #ff4747;
+      --text:    #f0f0f5;
+      --muted:   #6b6b80;
+    }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 560px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      animation: pop .5s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -.04em;
+      color: var(--accent);
+      margin-bottom: .75rem;
+    }
+
+    p {
+      font-family: 'DM Mono', monospace;
+      font-size: .85rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .exploit-card {
+      background: rgba(255,71,71,.06);
+      border: 1px solid rgba(255,71,71,.3);
+      border-left: 4px solid var(--danger);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+
+    .exploit-card h3 {
+      font-size: .85rem;
+      color: var(--danger);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+    }
+
+    .exploit-card code {
+      font-family: 'DM Mono', monospace;
+      font-size: .78rem;
+      color: #ff9999;
+      line-height: 1.9;
+      display: block;
+    }
+
+    .btn-back {
+      display: inline-block;
+      padding: .85rem 2rem;
+      background: var(--accent);
+      color: #0a0a0f;
+      font-family: 'Syne', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background .2s, transform .15s;
+    }
+
+    .btn-back:hover  { background: #d4e83e; transform: scale(1.02); }
+    .btn-back:active { transform: scale(.98); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🎯</div>
+    <h1>Exploit Uğurlu!</h1>
+    <p>
+      Stripe ödənişi tamamlandı — lakin siz ödənişi manipulyasiya etdiniz.<br>
+      Real bir mağazada bu, böyük maliyyə itkisinə səbəb olardı.
+    </p>
+
+    <div class="exploit-card">
+      <h3>⚠ Nə baş verdi?</h3>
+      <code>
+        1. index.html açıldı<br>
+        2. DevTools → Elements (F12)<br>
+        3. &lt;input name="price" value="1000"&gt; tapıldı<br>
+        4. Dəyər "1" olaraq dəyişdirildi<br>
+        5. Form göndərildi → Stripe 1 AZN tutdu<br>
+        6. 1000 AZN-lik məhsul 1 AZN-ə alındı ✓
+      </code>
+    </div>
+
+    <a href="/" class="btn-back">← Geri Qayıt</a>
+  </div>
+</body>
+</html>
