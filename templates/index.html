@@ -294,16 +294,6 @@
   <div class="badge">⚠ VULNERABLE DEMO</div>
 </header>
 
-<!-- ── Hero ───────────────────────────────────────── -->
-<section class="hero">
-  <div class="hero-tag">// PENTEST LABORATORIYASI</div>
-  <h1>Premium <em>Məhsullar</em><br>Qiymət <em>Manipulyasiyası</em></h1>
-  <p class="hero-sub">
-    Bu demo e-ticarət saytında <strong style="color:var(--danger)">Price Manipulation</strong> zəifliyi
-    qəsdən yerləşdirilib. DevTools ilə hidden input dəyərini dəyişin.
-  </p>
-</section>
-
 
 <!-- ── Product Grid ────────────────────────────────── -->
 <section class="products">
@@ -320,7 +310,6 @@
       </div>
       <div class="vuln-note">
         🎯 <code>name="price" value="1000"</code><br>
-        → Bunu DevTools ilə <code>value="1"</code> edin!
       </div>
       <form class="buy-form" method="POST" action="/create-checkout-session">
         <input type="hidden" name="product_name" value="iPhone 15 Pro" />
@@ -342,7 +331,6 @@
       </div>
       <div class="vuln-note">
         🎯 <code>name="price" value="2500"</code><br>
-        → Bunu DevTools ilə <code>value="1"</code> edin!
       </div>
       <form class="buy-form" method="POST" action="/create-checkout-session">
         <input type="hidden" name="product_name" value="MacBook Air M3" />
@@ -364,7 +352,6 @@
       </div>
       <div class="vuln-note">
         🎯 <code>name="price" value="350"</code><br>
-        → Bunu DevTools ilə <code>value="1"</code> edin!
       </div>
       <form class="buy-form" method="POST" action="/create-checkout-session">
         <input type="hidden" name="product_name" value="AirPods Pro 2" />
@@ -378,8 +365,7 @@
 
 <!-- ── Footer ──────────────────────────────────────── -->
 <footer>
-  <div class="footer-copy">© 2025 TechMart — Pentest Demo. Bütün hüquqlar qorunur.</div>
-  <div class="footer-warning">⚠ REAL İSTİFADƏ ÜÇÜN DEYİL</div>
+  <div class="footer-copy">© 2025 TechMart — Pentest Demo.</div>
 </footer>
 
 </body>
