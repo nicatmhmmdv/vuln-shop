@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Qeydiyyat — TechMart{% endblock %}
+
+{% block extra_style %}
+  .auth-page {
+    min-height: calc(100vh - 130px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 3rem 1.5rem;
+  }
+  .auth-box {
+    width: 100%; max-width: 420px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  }
+  .auth-header {
+    padding: 2.25rem 2.25rem 1.75rem; border-bottom: 1px solid var(--border);
+  }
+  .auth-tag {
+    font-family: 'DM Mono', monospace; font-size: .68rem;
+    color: var(--accent2); letter-spacing: .12em; margin-bottom: .6rem;
+  }
+  .auth-title { font-size: 1.75rem; font-weight: 800; letter-spacing: -.04em; }
+  .auth-body { padding: 2rem 2.25rem 2.25rem; }
+
+  .field { margin-bottom: 1.2rem; }
+  .field label {
+    display: block; font-family: 'DM Mono', monospace; font-size: .75rem;
+    color: var(--muted); margin-bottom: .5rem; letter-spacing: .04em;
+  }
+  .field input {
+    width: 100%; padding: .8rem 1rem;
+    background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 5px;
+    font-family: 'DM Mono', monospace; font-size: .9rem;
+    outline: none; transition: border-color .2s;
+  }
+  .field input:focus { border-color: var(--accent2); }
+  .field input::placeholder { color: var(--muted); }
+  .field-hint {
+    font-family: 'DM Mono', monospace; font-size: .68rem;
+    color: var(--muted); margin-top: .4rem;
+  }
+
+  .btn-submit {
+    width: 100%; padding: .9rem;
+    background: var(--accent2); color: #051a18;
+    font-family: 'Syne', sans-serif; font-size: .95rem; font-weight: 700;
+    border: none; border-radius: 5px; cursor: pointer;
+    transition: background .2s, transform .15s; margin-top: .5rem;
+  }
+  .btn-submit:hover  { background: #38e8d4; transform: scale(1.01); }
+  .btn-submit:active { transform: scale(.98); }
+
+  .auth-footer {
+    margin-top: 1.5rem; text-align: center;
+    font-family: 'DM Mono', monospace; font-size: .78rem; color: var(--muted);
+  }
+  .auth-footer a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(232,255,71,.3); }
+  .auth-footer a:hover { border-color: var(--accent); }
+{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+  <div class="auth-box">
+    <div class="auth-header">
+      <div class="auth-tag">// YENİ HESAB</div>
+      <h2 class="auth-title">Qeydiyyat</h2>
+    </div>
+    <div class="auth-body">
+      <form method="POST" action="{{ url_for('register') }}">
+        <div class="field">
+          <label for="username">İstifadəçi Adı</label>
+          <input type="text" id="username" name="username"
+                 placeholder="username" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="password">Şifrə</label>
+          <input type="password" id="password" name="password"
+                 placeholder="••••••••" autocomplete="new-password" required />
+          <div class="field-hint">Ən azı 6 simvol</div>
+        </div>
+        <div class="field">
+          <label for="confirm">Şifrəni Təsdiq Et</label>
+          <input type="password" id="confirm" name="confirm"
+                 placeholder="••••••••" autocomplete="new-password" required />
+        </div>
+        <button type="submit" class="btn-submit">Hesab Yarat →</button>
+      </form>
+      <div class="auth-footer">
+        Artıq hesabınız var? <a href="{{ url_for('login') }}">Giriş et</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

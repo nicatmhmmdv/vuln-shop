@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Giriş — TechMart{% endblock %}
+
+{% block extra_style %}
+  .auth-page {
+    min-height: calc(100vh - 130px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 3rem 1.5rem;
+  }
+  .auth-box {
+    width: 100%; max-width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .auth-header {
+    padding: 2.25rem 2.25rem 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.75rem;
+  }
+  .auth-tag {
+    font-family: 'DM Mono', monospace; font-size: .68rem;
+    color: var(--accent); letter-spacing: .12em; text-transform: uppercase;
+    margin-bottom: .6rem;
+  }
+  .auth-title {
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -.04em;
+  }
+  .auth-body { padding: 2rem 2.25rem 2.25rem; }
+
+  .field { margin-bottom: 1.25rem; }
+  .field label {
+    display: block;
+    font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--muted);
+    margin-bottom: .5rem; letter-spacing: .04em;
+  }
+  .field input {
+    width: 100%; padding: .8rem 1rem;
+    background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 5px;
+    font-family: 'DM Mono', monospace; font-size: .9rem;
+    outline: none; transition: border-color .2s;
+  }
+  .field input:focus { border-color: var(--accent); }
+  .field input::placeholder { color: var(--muted); }
+
+  .btn-submit {
+    width: 100%; padding: .9rem;
+    background: var(--accent); color: #0a0a0f;
+    font-family: 'Syne', sans-serif; font-size: .95rem; font-weight: 700;
+    border: none; border-radius: 5px; cursor: pointer;
+    transition: background .2s, transform .15s;
+    margin-top: .5rem;
+  }
+  .btn-submit:hover  { background: #d4e83e; transform: scale(1.01); }
+  .btn-submit:active { transform: scale(.98); }
+
+  .auth-footer {
+    margin-top: 1.5rem; text-align: center;
+    font-family: 'DM Mono', monospace; font-size: .78rem; color: var(--muted);
+  }
+  .auth-footer a { color: var(--accent2); text-decoration: none; border-bottom: 1px solid rgba(71,255,232,.3); }
+  .auth-footer a:hover { border-color: var(--accent2); }
+{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+  <div class="auth-box">
+    <div class="auth-header">
+      <div class="auth-tag">// GİRİŞ</div>
+      <h2 class="auth-title">Xoş Gəldiniz</h2>
+    </div>
+    <div class="auth-body">
+      <form method="POST" action="{{ url_for('login') }}">
+        <div class="field">
+          <label for="username">İstifadəçi Adı</label>
+          <input type="text" id="username" name="username"
+                 placeholder="username" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="password">Şifrə</label>
+          <input type="password" id="password" name="password"
+                 placeholder="••••••••" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn-submit">Daxil ol →</button>
+      </form>
+      <div class="auth-footer">
+        Hesabınız yoxdur? <a href="{{ url_for('register') }}">Qeydiyyat</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

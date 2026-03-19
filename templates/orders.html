@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Sifarişlərim — TechMart{% endblock %}
+
+{% block extra_style %}
+  .orders-page { padding: 4rem 2rem 6rem; max-width: 860px; margin: 0 auto; }
+
+  .page-header { margin-bottom: 2.5rem; }
+  .page-tag {
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    color: var(--accent2); letter-spacing: .1em; margin-bottom: .6rem;
+  }
+  .page-title {
+    font-size: 2.2rem; font-weight: 800; letter-spacing: -.04em;
+  }
+  .page-sub {
+    font-family: 'DM Mono', monospace; font-size: .8rem;
+    color: var(--muted); margin-top: .5rem;
+  }
+
+  /* ── Table ─────────────────────────────────── */
+  .orders-table {
+    width: 100%; border-collapse: collapse;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+  }
+
+  .orders-table th {
+    text-align: left; padding: 1rem 1.25rem;
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    color: var(--muted); letter-spacing: .08em; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,.02);
+  }
+
+  .orders-table td {
+    padding: 1.1rem 1.25rem;
+    font-family: 'DM Mono', monospace; font-size: .82rem;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .orders-table tr:last-child td { border-bottom: none; }
+  .orders-table tr:hover td { background: rgba(255,255,255,.02); }
+
+  .order-product { display: flex; align-items: center; gap: .75rem; }
+  .order-emoji { font-size: 1.5rem; }
+  .order-name { font-size: .85rem; font-weight: 600; color: var(--text); font-family: 'Syne', sans-serif; }
+
+  .price-cell { color: var(--accent); font-weight: 600; font-size: .9rem; }
+
+  .status-badge {
+    display: inline-block;
+    padding: .25rem .7rem; border-radius: 20px; font-size: .68rem;
+    background: rgba(71,255,138,.1); color: var(--success);
+    border: 1px solid rgba(71,255,138,.25);
+  }
+
+  .session-id {
+    color: var(--muted); font-size: .68rem;
+    max-width: 160px; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; display: block;
+  }
+
+  /* ── Empty State ────────────────────────────── */
+  .empty-state {
+    text-align: center; padding: 5rem 2rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .empty-icon { font-size: 3rem; margin-bottom: 1.25rem; }
+  .empty-title { font-size: 1.4rem; font-weight: 700; letter-spacing: -.03em; margin-bottom: .6rem; }
+  .empty-sub {
+    font-family: 'DM Mono', monospace; font-size: .8rem;
+    color: var(--muted); line-height: 1.7; margin-bottom: 2rem;
+  }
+  .btn-shop {
+    display: inline-block; padding: .8rem 2rem;
+    background: var(--accent); color: #0a0a0f;
+    font-family: 'Syne', sans-serif; font-size: .9rem; font-weight: 700;
+    border-radius: 5px; text-decoration: none;
+    transition: background .2s;
+  }
+  .btn-shop:hover { background: #d4e83e; }
+
+  /* ── Stats Bar ──────────────────────────────── */
+  .stats-bar {
+    display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;
+  }
+  .stat-chip {
+    font-family: 'DM Mono', monospace; font-size: .76rem;
+    padding: .5rem 1rem; border-radius: 5px;
+    background: var(--raised); border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .stat-chip strong { color: var(--text); }
+  .stat-chip.accent strong { color: var(--accent); }
+{% endblock %}
+
+{% block content %}
+<section class="orders-page">
+
+  <div class="page-header">
+    <div class="page-tag">// SİFARİŞLƏRİM</div>
+    <h2 class="page-title">Ödənilmiş Sifarişlər</h2>
+    <p class="page-sub">Yalnız {{ current_user.username }} hesabına aid, statusu "paid" olan sifarişlər</p>
+  </div>
+
+  {% if orders %}
+    <div class="stats-bar">
+      <div class="stat-chip">
+        Cəmi: <strong>{{ orders | length }} sifariş</strong>
+      </div>
+      <div class="stat-chip accent">
+        Ümumi məbləğ:
+        <strong>
+          {{ orders | sum(attribute='product.display') | int }} AZN
+        </strong>
+      </div>
+    </div>
+
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Məhsul</th>
+          <th>Qiymət</th>
+          <th>Status</th>
+          <th>Stripe Session ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td>{{ order.id }}</td>
+          <td>
+            <div class="order-product">
+              <span class="order-emoji">{{ order.product.emoji }}</span>
+              <span class="order-name">{{ order.product.name }}</span>
+            </div>
+          </td>
+          <td class="price-cell">{{ order.product.display }} AZN</td>
+          <td><span class="status-badge">● Ödənilib</span></td>
+          <td><span class="session-id" title="{{ order.stripe_session_id }}">{{ order.stripe_session_id }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🛍️</div>
+      <h3 class="empty-title">Hələ heç bir sifariş yoxdur</h3>
+      <p class="empty-sub">
+        Mağazaya daxil olun və ilk alışınızı edin.<br>
+      </p>
+      <a href="{{ url_for('index') }}" class="btn-shop">Mağazaya Get →</a>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}

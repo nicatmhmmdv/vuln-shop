@@ -1,120 +1,123 @@
-<!DOCTYPE html>
-<html lang="az">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ödəniş Uğurlu — TechMart</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+{% extends "base.html" %}
+{% block title %}Ödəniş Uğurlu — TechMart{% endblock %}
 
-    :root {
-      --bg:      #0a0a0f;
-      --surface: #111118;
-      --border:  #1e1e2e;
-      --accent:  #e8ff47;
-      --danger:  #ff4747;
-      --text:    #f0f0f5;
-      --muted:   #6b6b80;
-    }
+{% block extra_style %}
+  .success-page {
+    min-height: calc(100vh - 130px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 3rem 1.5rem;
+  }
+  .success-card {
+    width: 100%; max-width: 520px;
+    background: var(--surface); border: 1px solid rgba(71,255,138,.25);
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 0 60px rgba(71,255,138,.06);
+  }
+  .success-header {
+    padding: 2.5rem 2.5rem 2rem;
+    background: linear-gradient(135deg, rgba(71,255,138,.07) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(71,255,138,.15);
+    text-align: center;
+  }
+  .success-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+  .success-title { font-size: 2rem; font-weight: 800; letter-spacing: -.04em; color: var(--success); }
+  .success-sub {
+    font-family: 'DM Mono', monospace; font-size: .8rem;
+    color: var(--muted); margin-top: .5rem; line-height: 1.7;
+  }
 
-    body {
-      font-family: 'Syne', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
+  .order-details { padding: 2rem 2.5rem; }
 
-    .container {
-      max-width: 560px;
-      width: 100%;
-      text-align: center;
-    }
+  .detail-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: .85rem 0; border-bottom: 1px solid var(--border);
+    font-family: 'DM Mono', monospace; font-size: .82rem;
+  }
+  .detail-row:last-of-type { border-bottom: none; }
+  .detail-label { color: var(--muted); }
+  .detail-value { color: var(--text); font-weight: 500; }
+  .detail-value.accent { color: var(--accent); font-size: 1.1rem; font-weight: 700; }
+  .detail-value.success-v { color: var(--success); }
 
-    .icon {
-      font-size: 4rem;
-      margin-bottom: 1.5rem;
-      animation: pop .5s cubic-bezier(.34,1.56,.64,1);
-    }
+  .verify-note {
+    margin: 1.25rem 0 0;
+    padding: .9rem 1.1rem;
+    background: rgba(71,255,138,.05);
+    border: 1px solid rgba(71,255,138,.15);
+    border-left: 3px solid var(--success);
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: .73rem;
+    color: #a0ffcc; line-height: 1.8;
+  }
+  .verify-note strong { color: var(--success); }
 
-    @keyframes pop {
-      from { transform: scale(0); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
-    }
+  .action-row {
+    padding: 0 2.5rem 2.5rem;
+    display: flex; gap: .75rem;
+  }
+  .btn-orders {
+    flex: 1; padding: .85rem;
+    background: var(--accent); color: #0a0a0f;
+    font-family: 'Syne', sans-serif; font-size: .9rem; font-weight: 700;
+    border: none; border-radius: 5px; cursor: pointer;
+    text-decoration: none; text-align: center;
+    transition: background .2s;
+  }
+  .btn-orders:hover { background: #d4e83e; }
+  .btn-shop {
+    padding: .85rem 1.25rem;
+    background: transparent; color: var(--muted);
+    font-family: 'Syne', sans-serif; font-size: .9rem; font-weight: 600;
+    border: 1px solid var(--border); border-radius: 5px;
+    text-decoration: none; text-align: center;
+    transition: border-color .2s, color .2s;
+  }
+  .btn-shop:hover { border-color: var(--muted); color: var(--text); }
+{% endblock %}
 
-    h1 {
-      font-size: 2.5rem;
-      font-weight: 800;
-      letter-spacing: -.04em;
-      color: var(--accent);
-      margin-bottom: .75rem;
-    }
+{% block content %}
+<section class="success-page">
+  <div class="success-card">
+    <div class="success-header">
+      <div class="success-icon">✅</div>
+      <h2 class="success-title">Ödəniş Tamamlandı!</h2>
+      <p class="success-sub">
+        Stripe tərəfindən doğrulandı. Sifariş bazaya qeyd edildi.
+      </p>
+    </div>
 
-    p {
-      font-family: 'DM Mono', monospace;
-      font-size: .85rem;
-      color: var(--muted);
-      line-height: 1.7;
-      margin-bottom: 2rem;
-    }
+    <div class="order-details">
+      <div class="detail-row">
+        <span class="detail-label">Məhsul</span>
+        <span class="detail-value">{{ product.emoji }} {{ product.name }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Məbləğ</span>
+        <span class="detail-value accent">{{ product.display }} AZN</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Sifariş №</span>
+        <span class="detail-value">#{{ order.id }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Status</span>
+        <span class="detail-value success-v">● Ödənilib</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Stripe Session</span>
+        <span class="detail-value" style="font-size:.7rem; max-width:220px; overflow:hidden; text-overflow:ellipsis;">
+          <!-- {{ order.stripe_session_id[:28] }}… -->
+          {{ (order.stripe_session_id[:28] if order.stripe_session_id else "ID yoxdur") }}
+        </span>
+      </div>
 
-    .exploit-card {
-      background: rgba(255,71,71,.06);
-      border: 1px solid rgba(255,71,71,.3);
-      border-left: 4px solid var(--danger);
-      border-radius: 6px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 2rem;
-      text-align: left;
-    }
+      
+    </div>
 
-    .exploit-card h3 {
-      font-size: .85rem;
-      color: var(--danger);
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      margin-bottom: .75rem;
-    }
-
-    .exploit-card code {
-      font-family: 'DM Mono', monospace;
-      font-size: .78rem;
-      color: #ff9999;
-      line-height: 1.9;
-      display: block;
-    }
-
-    .btn-back {
-      display: inline-block;
-      padding: .85rem 2rem;
-      background: var(--accent);
-      color: #0a0a0f;
-      font-family: 'Syne', sans-serif;
-      font-size: .9rem;
-      font-weight: 700;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: background .2s, transform .15s;
-    }
-
-    .btn-back:hover  { background: #d4e83e; transform: scale(1.02); }
-    .btn-back:active { transform: scale(.98); }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="icon">🎯</div>
-    <h1>SUCCESS</h1>
-    <p>
-      Ödəniş tamamlandı!
-    </p>
-
-    <a href="/" class="btn-back">← Geri Qayıt</a>
+    <div class="action-row">
+      <a href="{{ url_for('my_orders') }}" class="btn-orders">Sifarişlərimə Bax →</a>
+      <a href="{{ url_for('index') }}"     class="btn-shop">Mağazaya Qayıt</a>
+    </div>
   </div>
-</body>
-</html>
+</section>
+{% endblock %}

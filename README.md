@@ -1,89 +1,15 @@
-# 🛒 TechMart — Price Manipulation Demo
+# 🛒 TechMart v2 — Təhlükəsiz Flask E-Ticarət
 
-> **⚠ Bu layihə yalnız təhsil və pentest məqsədləri üçündür.**
+Flask-SQLAlchemy + Flask-Login + Stripe ilə tam funksional, təhlükəsiz e-ticarət tətbiqi.
 
 ---
 
 ## 🚀 Quraşdırma
 
 ```bash
-cd ecommerce
 pip install -r requirements.txt
-cp .env.example .env          # .env içinə Stripe test açarını əlavə edin
-python app.py                  # http://localhost:5000
-```
-
----
-
-## 🎯 Zəiflik: Price Manipulation
-
-### Necə İşləyir?
-```
-index.html
-└── <input type="hidden" name="price" value="1000">
-                                          ↑
-                               BU DƏYƏRİ BRAUZER DEVTOOLSİ
-                               İLƏ DƏYİŞMƏK MÜMKÜNDÜR!
-```
-
-### Hücum Addımları (Pentest)
-1. `http://localhost:5000` açın
-2. **F12** → "Elements" tabına geçin
-3. `Ctrl+F` → `name="price"` axtarın
-4. `value="1000"` → sağ klik → **Edit as HTML** → `value="1"` yazın
-5. "İndi Al" düyməsinə basın
-6. Stripe checkout-da **1.00 AZN** görəcəksiniz — ödəyin
-7. 1000 AZN-lik iPhone 1 AZN-ə alındı ✅
-
-### Alternativ: `curl` ilə Hücum
-```bash
-curl -X POST http://localhost:5000/create-checkout-session \
-  -d "product_name=iPhone+15+Pro&price=0.01"
-```
-
----
-
-## 🔐 Düzəliş (FIX)
-
-### Zəif Kod (app.py — mövcud)
-```python
-# ❌ İstifadəçidən gələn qiyməti birbaşa istifadə edir
-price_raw = request.form.get("price", "100")
-amount_in_qepik = int(float(price_raw) * 100)
-```
-
-### Düzgün Kod
-```python
-# ✅ Qiymət server tərəfindəki bazadan götürülür
-PRODUCTS = {
-    "iphone_15": {"name": "iPhone 15 Pro", "price": 100000},
-    "macbook":   {"name": "MacBook Air M3", "price": 250000},
-    "airpods":   {"name": "AirPods Pro 2",  "price":  35000},
-}
-
-@app.route("/create-checkout-session", methods=["POST"])
-def create_checkout_session():
-    product_id = request.form.get("product_id")      # yalnız ID qəbul et
-    product    = PRODUCTS.get(product_id)
-
-    if not product:
-        return "Məhsul tapılmadı", 404
-
-    # Qiymət həmişə serverdən götürülür — istifadəçi dəyişə bilməz
-    session = stripe.checkout.Session.create(
-        line_items=[{
-            "price_data": {
-                "currency": "azn",
-                "product_data": {"name": product["name"]},
-                "unit_amount": product["price"],   # ← SERVER QİYMƏTİ
-            },
-            "quantity": 1,
-        }],
-        mode="payment",
-        success_url=request.host_url + "success",
-        cancel_url=request.host_url,
-    )
-    return redirect(session.url, code=303)
+cp .env.example .env        # Stripe və SECRET_KEY əlavə edin
+python app.py               # http://localhost:5000
 ```
 
 ---
@@ -91,26 +17,77 @@ def create_checkout_session():
 ## 📁 Fayl Strukturu
 
 ```
-ecommerce/
-├── app.py                  # Flask backend (zəiflik burada)
+ecommerce_v2/
+├── app.py
 ├── requirements.txt
-├── .env.example            # Stripe açarı şablonu
+├── .env.example
 └── templates/
-    ├── index.html          # Məhsul kartları (hidden input zəifliyi)
-    └── success.html        # Uğurlu ödəniş səhifəsi
+    ├── base.html       ← Shared layout + nav (login-aware)
+    ├── index.html      ← Məhsul kartları
+    ├── login.html      ← Giriş formu
+    ├── register.html   ← Qeydiyyat formu
+    ├── success.html    ← Stripe-doğrulanmış uğur səhifəsi
+    └── orders.html     ← İstifadəçinin ödənilmiş sifarişləri
 ```
 
 ---
 
-## 📚 OWASP Kateqoriyası
+## 🗄️ Verilənlər Bazası Modelləri
 
-| Sahə         | Dəyər                                          |
-|--------------|------------------------------------------------|
-| **CWE**      | CWE-602: Client-Side Enforcement of Server-Side Security |
-| **OWASP**    | A04:2021 – Insecure Design                     |
-| **Ciddilik** | Kritik (CVSS 9.1)                              |
-| **Səbəb**    | Biznes məntiqinin client-side-da saxlanması    |
+### User
+| Sütun         | Tip          | Qeyd                     |
+|---------------|--------------|--------------------------|
+| id            | Integer PK   |                          |
+| username      | String(80)   | unique                   |
+| password_hash | String(256)  | werkzeug PBKDF2 hash     |
+
+### Order
+| Sütun             | Tip          | Qeyd                       |
+|-------------------|--------------|----------------------------|
+| id                | Integer PK   |                            |
+| user_id           | FK → User    |                            |
+| product_id        | String(50)   | "iphone_15", "macbook" ... |
+| stripe_session_id | String(200)  | unique                     |
+| status            | String(20)   | "pending" → "paid"         |
 
 ---
 
-> Hazırlanıb: Pentest Laboratoriya Məqsədləri üçün
+## 🔐 Təhlükəsizlik Müqayisəsi
+
+| Məsələ                     | v1 (Zəif)                        | v2 (Təhlükəsiz)                        |
+|----------------------------|----------------------------------|----------------------------------------|
+| Qiymət mənbəyi             | `request.form["price"]`          | `PRODUCTS[product_id]["price"]`        |
+| `/success` qorunması       | Yox — URL yazaraq açılır         | `session_id` + Stripe API doğrulaması  |
+| İstifadəçi sistemi         | Yox                              | Flask-Login, hashed password           |
+| Sifariş izlənməsi          | Yox                              | SQLite → Order modeli                  |
+| Auth qoruması              | Yox                              | `@login_required` decorator            |
+
+---
+
+## 🔑 Axın Diaqramı
+
+```
+[İstifadəçi] → /register → login_user()
+                    ↓
+[İstifadəçi] → POST /create-checkout-session
+                    │  product_id → PRODUCTS[id]["price"]  ← SERVER QİYMƏTİ
+                    │  Order(status="pending") → DB
+                    ↓
+             [Stripe Checkout]
+                    ↓
+[İstifadəçi] → /success?session_id=cs_xxx
+                    │  stripe.checkout.Session.retrieve(session_id)
+                    │  payment_status == "paid" → order.status = "paid"
+                    ↓
+[İstifadəçi] → /my-orders → yalnız "paid" sifarişlər
+```
+
+---
+
+## 🧪 Test Kartı (Stripe)
+
+| Sahə    | Dəyər                |
+|---------|----------------------|
+| Kart №  | `4242 4242 4242 4242` |
+| Tarix   | İstənilən gələcək    |
+| CVC     | İstənilən 3 rəqəm    |

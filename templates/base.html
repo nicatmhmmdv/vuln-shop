@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}TechMart{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0a0a0f;
+      --surface: #111118;
+      --raised:  #16161f;
+      --border:  #1e1e2e;
+      --accent:  #e8ff47;
+      --accent2: #47ffe8;
+      --text:    #f0f0f5;
+      --muted:   #6b6b80;
+      --danger:  #ff4747;
+      --success: #47ff8a;
+      --warning: #ffb347;
+      --info:    #47b0ff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: .6;
+    }
+
+    /* ── Header ─────────────────────────────────── */
+    header {
+      position: sticky; top: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 3rem;
+      background: rgba(10,10,15,.88);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-size: 1.35rem; font-weight: 800; letter-spacing: -.03em;
+      color: var(--accent); text-decoration: none;
+    }
+    .logo span { color: var(--text); }
+
+    nav { display: flex; align-items: center; gap: .5rem; }
+
+    .nav-link {
+      font-family: 'DM Mono', monospace;
+      font-size: .78rem;
+      color: var(--muted);
+      text-decoration: none;
+      padding: .45rem .9rem;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      transition: color .2s, border-color .2s, background .2s;
+      white-space: nowrap;
+    }
+    .nav-link:hover        { color: var(--text); border-color: var(--border); background: var(--surface); }
+    .nav-link.active       { color: var(--accent); }
+    .nav-link.btn-accent   { background: var(--accent); color: #0a0a0f; border-color: var(--accent); font-weight: 600; }
+    .nav-link.btn-accent:hover { background: #d4e83e; }
+    .nav-link.btn-outline  { border-color: var(--border); color: var(--text); }
+    .nav-link.btn-outline:hover { border-color: var(--muted); }
+
+    .user-chip {
+      font-family: 'DM Mono', monospace;
+      font-size: .72rem;
+      color: var(--accent2);
+      border: 1px solid rgba(71,255,232,.25);
+      padding: .3rem .75rem;
+      border-radius: 20px;
+      background: rgba(71,255,232,.05);
+    }
+
+    /* ── Flash Messages ──────────────────────────── */
+    .flashes {
+      position: relative; z-index: 10;
+      padding: .75rem 3rem 0;
+      display: flex; flex-direction: column; gap: .5rem;
+    }
+
+    .flash {
+      font-family: 'DM Mono', monospace;
+      font-size: .8rem;
+      padding: .75rem 1.25rem;
+      border-radius: 5px;
+      border-left: 3px solid;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .flash.success { background: rgba(71,255,138,.08); border-color: var(--success); color: #a0ffcc; }
+    .flash.danger  { background: rgba(255,71,71,.08);  border-color: var(--danger);  color: #ffaaaa; }
+    .flash.warning { background: rgba(255,179,71,.08); border-color: var(--warning); color: #ffd9a0; }
+    .flash.info    { background: rgba(71,176,255,.08); border-color: var(--info);    color: #a0d8ff; }
+
+    /* ── Main ────────────────────────────────────── */
+    main { flex: 1; position: relative; z-index: 1; }
+
+    /* ── Footer ──────────────────────────────────── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 3rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-copy {
+      font-family: 'DM Mono', monospace; font-size: .72rem; color: var(--muted);
+    }
+    .footer-secure {
+      font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--success);
+      border: 1px solid rgba(71,255,138,.2); padding: .25rem .7rem; border-radius: 3px;
+    }
+
+    /* ── Shared Utilities ────────────────────────── */
+    .mono { font-family: 'DM Mono', monospace; }
+    .text-accent   { color: var(--accent); }
+    .text-muted    { color: var(--muted); }
+    .text-danger   { color: var(--danger); }
+    .text-success  { color: var(--success); }
+
+    ::-webkit-scrollbar              { width: 5px; }
+    ::-webkit-scrollbar-track        { background: var(--bg); }
+    ::-webkit-scrollbar-thumb        { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover  { background: var(--muted); }
+
+    {% block extra_style %}{% endblock %}
+  </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────── -->
+<header>
+  <a href="{{ url_for('index') }}" class="logo">Tech<span>Mart</span></a>
+  <nav>
+    {% if current_user.is_authenticated %}
+      <span class="user-chip">👤 {{ current_user.username }}</span>
+      <a href="{{ url_for('my_orders') }}" class="nav-link">Sifarişlərim</a>
+      <a href="{{ url_for('logout') }}"    class="nav-link btn-outline">Çıxış</a>
+    {% else %}
+      <a href="{{ url_for('login') }}"    class="nav-link">Giriş</a>
+      <a href="{{ url_for('register') }}" class="nav-link btn-accent">Qeydiyyat</a>
+    {% endif %}
+  </nav>
+</header>
+
+<!-- ── Flash Messages ─────────────────────────────── -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flashes">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">
+          {% if category == 'success' %}✓{% elif category == 'danger' %}✕{% elif category == 'warning' %}⚠{% else %}ℹ{% endif %}
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- ── Content ─────────────────────────────────────── -->
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+
+
+</body>
+</html>
